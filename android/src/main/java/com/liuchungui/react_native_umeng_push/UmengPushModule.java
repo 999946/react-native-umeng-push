@@ -11,7 +11,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import com.umeng.message.UmengRegistrar;
+import com.umeng.message.PushAgent;
 import com.umeng.message.entity.UMessage;
 
 import org.json.JSONObject;
@@ -46,6 +46,12 @@ public class UmengPushModule extends ReactContextBaseJavaModule implements Lifec
         return "UmengPush";
     }
 
+
+    @Override
+    public boolean canOverrideExistingModule() {
+        return true;
+    }
+
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
@@ -60,7 +66,8 @@ public class UmengPushModule extends ReactContextBaseJavaModule implements Lifec
      */
     @ReactMethod
     public void getDeviceToken(Callback callback) {
-        String registrationId = UmengRegistrar.getRegistrationId(mReactContext);
+        PushAgent mPushAgent = PushAgent.getInstance(mReactContext);
+        String registrationId = mPushAgent.getRegistrationId();
         callback.invoke(registrationId == null ? mPushApplication.mRegistrationId : registrationId);
     }
 

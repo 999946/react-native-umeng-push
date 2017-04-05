@@ -43,20 +43,22 @@ public class UmengPushApplication extends Application {
     }
     //开启推送
     private void enablePush() {
-        mPushAgent = PushAgent.getInstance(this);
-        mPushAgent.enable(new IUmengRegisterCallback() {
+        mPushAgent = PushAgent.getInstance(this.getApplicationContext());
+        mPushAgent.register(new IUmengRegisterCallback() {
             @Override
-            public void onRegistered(final String s) {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "enable push, registrationId = " + s);
-                        mRegistrationId = s;
-                    }
-                });
+            public void onSuccess(String deviceToken) {
+                //注册成功会返回device token
+                Log.i(TAG, "enable push, registrationId = " + deviceToken);
+                mRegistrationId = deviceToken;
+            }
+
+            @Override
+            public void onFailure(String s, String s1) {
+
             }
         });
-        //统计应用启动数据
+        // PS: 在所有的Activity 的onCreate 方法或在应用的BaseActivity的onCreate方法中添加
+        // 统计应用启动数据
         mPushAgent.onAppStart();
 
         UmengNotificationClickHandler notificationClickHandler = new UmengNotificationClickHandler() {
